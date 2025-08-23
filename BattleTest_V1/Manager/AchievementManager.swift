@@ -12,7 +12,7 @@ class AchievementManager {
     
     private init() {}
     
-    // MARK: - Main Achievement Evaluation
+    // MARK: - Main Achievement Evaluation IGH
     
     /// Evalúa un resultado de quiz y otorga achievements correspondientes
     /// ORIGEN: QuizResult recién completado + Student actual
