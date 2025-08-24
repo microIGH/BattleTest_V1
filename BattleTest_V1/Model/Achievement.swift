@@ -3,7 +3,7 @@
 //  BattleTest_V1
 //
 //  Created by ISRAEL GARCIA on 21/08/25.
-//.
+// Verificando
 
 import Foundation
 
@@ -24,6 +24,7 @@ enum AchievementType: String, CaseIterable, Codable {
         }
     }
 }
+
 
 enum AchievementStatus: String, Codable {
     case locked = "locked"       // No disponible aún
