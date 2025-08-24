@@ -67,23 +67,19 @@ class QuestionView: UIView {
         ])
     }
     
-    // FUNCIÓN COMO TU showQuestion() JS
     func configure(question: String, options: [String], selectedAnswer: String?) {
         questionLabel.text = question
         currentOptions = options
         
-        // Limpiar botones anteriores
         optionButtons.forEach { $0.removeFromSuperview() }
         optionButtons.removeAll()
         
-        // Crear botones para cada opción (como tu radio buttons)
         for (index, option) in options.enumerated() {
             let button = createOptionButton(option: option, index: index)
             optionButtons.append(button)
             optionsStackView.addArrangedSubview(button)
         }
         
-        // Seleccionar respuesta previa si existe (como tu JS previouslySelectedOption)
         if let selectedAnswer = selectedAnswer {
             selectAnswer(selectedAnswer)
         }
@@ -117,19 +113,16 @@ class QuestionView: UIView {
         guard let index = optionButtons.firstIndex(of: sender) else { return }
         let selectedOption = currentOptions[index]
         
-        // Deseleccionar todos los botones (como radio buttons)
         optionButtons.forEach { button in
             button.isSelected = false
             button.backgroundColor = UIColor.systemGray6
             button.layer.borderColor = UIColor.systemGray4.cgColor
         }
         
-        // Seleccionar el botón tocado
         sender.isSelected = true
         sender.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.1)
         sender.layer.borderColor = UIColor.systemBlue.cgColor
         
-        // Notificar al delegate (como tu event listener change)
         delegate?.questionView(self, didSelectAnswer: selectedOption)
     }
     

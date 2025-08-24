@@ -76,7 +76,6 @@ class SubjectCollectionViewCell: UICollectionViewCell {
     }
 }
 
-// MARK: - UIColor Extension
 extension UIColor {
     convenience init?(hex: String) {
         let r, g, b: CGFloat

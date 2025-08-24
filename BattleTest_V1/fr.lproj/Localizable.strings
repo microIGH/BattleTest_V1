@@ -1,0 +1,72 @@
+// Dashboard
+"dashboard_title" = "Tableau de bord";
+"hello_user" = "Salut, %@!";
+"points" = "POINTS";
+"quizzes" = "Quiz";
+"average" = "Moyenne";
+"time" = "Temps";
+"achievements_obtained" = "🏆 Succès obtenus (%d)";
+"no_achievements" = "🏆 Aucun succès pour le moment";
+
+// Profile
+"profile_title" = "Profil";
+"progress_by_subject" = "Progrès par matière";
+"achievements" = "Succès";
+"level_points" = "Niveau %d • %d points";
+
+// Subjects
+"subjects_title" = "Matières";
+"search_subject" = "Rechercher une matière...";
+
+// Quiz
+"back" = "Retour";
+"next" = "Suivant";
+"completed" = "terminés";
+
+// Achievements
+"achievement_locked" = "🔒 Ce succès n'est pas encore disponible.";
+"achievement_unlocked" = "⭐ Complétez les exigences pour obtenir %@!";
+"achievement_earned" = "🏆 Obtenu le %@";
+"achievement_reward" = "💰 Récompense: %@";
+"close" = "Fermer";
+
+//
+"level_progress" = "%d pts pour le\nprochain niveau";
+"level_max" = "Niveau max!";
+"achievements_title" = "🏆 Succès obtenus (%d)";
+"no_achievements_yet" = "🏆 Aucun succès";
+"activity_streak" = "Série: %d jour";
+"activity_days" = "jours";
+"quizzes_completed" = "%d/%d quiz";
+
+"level" = "Niveau %d";
+"streak_day" = "Série: %d jour";
+"welcome" = "Bienvenue!";
+
+"weekly_activity" = "📊 Activité hebdomadaire";
+"streak_text" = "🔥 Série: %d jour";
+"streak_days" = "🔥 Série: %d jours";
+
+"biology" = "Biologie";
+"physics" = "Physique";
+"chemistry" = "Chimie";
+"mathematics" = "Mathématiques";
+"questions" = "%d questions";
+
+"welcome_title" = "Bienvenue à Battle Test!";
+"name_placeholder" = "Votre nom";
+"email_placeholder" = "Votre email";
+"start_adventure" = "Commencer l'aventure";
+"error_title" = "Erreur";
+"complete_fields" = "Veuillez remplir tous les champs";
+"ok_button" = "OK";
+
+"results_title" = "Résultats";
+"quiz_completed" = "Quiz terminé";
+"answered_correctly" = "Vous avez répondu correctement à %d sur\n%d questions";
+"errors_made" = "Erreurs commises: %d";
+"time_taken" = "Temps: %@";
+"passed" = "Réussi! ✓";
+"failed" = "Échoué ✗";
+"new_achievements" = "🏆 Nouveaux succès obtenus!";
+"continue_button" = "Continuer";

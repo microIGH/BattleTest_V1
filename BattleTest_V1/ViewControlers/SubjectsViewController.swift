@@ -24,9 +24,9 @@ class SubjectsViewController: UIViewController {
     
     private func setupUI() {
         view.backgroundColor = UIColor(named: "PrimaryBackground") ?? UIColor.systemBackground
-        title = "Asignaturas"
+        title = "subjects_title".localized
         
-        searchBar.placeholder = "Buscar asignatura..."
+        searchBar.placeholder = "search_subject".localized
         searchBar.delegate = self
         searchBar.searchBarStyle = .minimal
     }
@@ -64,7 +64,7 @@ class SubjectsViewController: UIViewController {
     }
     
     private func loadSubjects() {
-        subjects = QuizDataManager.shared.getAllSubjects()
+        subjects = QuizDataManager.shared.getLocalizedSubjects()
         filteredSubjects = subjects
         collectionView.reloadData()
     }
@@ -79,7 +79,6 @@ class SubjectsViewController: UIViewController {
     }
 }
 
-// MARK: - UICollectionView DataSource & Delegate
 extension SubjectsViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -107,7 +106,6 @@ extension SubjectsViewController: UICollectionViewDataSource, UICollectionViewDe
     }
 }
 
-// MARK: - UISearchBar Delegate
 extension SubjectsViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {

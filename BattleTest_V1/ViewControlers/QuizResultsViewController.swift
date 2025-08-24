@@ -9,7 +9,6 @@ import UIKit
 
 class QuizResultsViewController: UIViewController {
     
-    // UI Elements (como tu completion screen JS)
     private let titleLabel = UILabel()
     private let scoreCircleView = UIView()
     private let scoreLabel = UILabel()
@@ -20,12 +19,11 @@ class QuizResultsViewController: UIViewController {
     private let statusLabel = UILabel()
     private let continueButton = UIButton(type: .system)
     
-    // NUEVO: Label para achievements obtenidos
     private let achievementsLabel = UILabel()
     private let achievementsStackView = UIStackView()
     
     private var quizResult: QuizResult!
-    private var newAchievements: [Achievement] = [] // NUEVO: Achievements obtenidos
+    private var newAchievements: [Achievement] = []
     
     func configure(with result: QuizResult) {
         self.quizResult = result
@@ -33,73 +31,62 @@ class QuizResultsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Deshabilitar botón back - usuario no puede regresar al quiz completado
         navigationItem.hidesBackButton = true
         setupUI()
         setupConstraints()
         displayResults()
-        saveProgress() // ACTUALIZADO: Ahora usa el nuevo sistema
+        saveProgress()
     }
     
     private func setupUI() {
         view.backgroundColor = UIColor(named: "PrimaryBackground") ?? UIColor.systemBackground
-        title = "Resultados"
+        title = "results_title".localized
         
-        // Título (como tu h2 completion)
-        titleLabel.text = "Cuestionario completado"
+        titleLabel.text = "quiz_completed".localized
         titleLabel.font = UIFont.boldSystemFont(ofSize: 24)
         titleLabel.textColor = UIColor.label
         titleLabel.textAlignment = .center
         
-        // Círculo de score (visual como tu calificacion)
         scoreCircleView.backgroundColor = UIColor.systemBlue
         scoreCircleView.layer.cornerRadius = 80
         scoreCircleView.clipsToBounds = true
         
-        // Score principal (como tu JS score display)
         scoreLabel.font = UIFont.boldSystemFont(ofSize: 28)
         scoreLabel.textColor = UIColor.white
         scoreLabel.textAlignment = .center
         
-        // Porcentaje
         percentageLabel.font = UIFont.systemFont(ofSize: 16)
         percentageLabel.textColor = UIColor.white
         percentageLabel.textAlignment = .center
         
-        // Detalles adicionales
         detailsLabel.font = UIFont.systemFont(ofSize: 18)
         detailsLabel.textColor = UIColor.label
         detailsLabel.textAlignment = .center
         detailsLabel.numberOfLines = 0
         
-        // Errores cometidos
         penaltyLabel.font = UIFont.systemFont(ofSize: 16)
         penaltyLabel.textColor = UIColor.systemRed
         penaltyLabel.textAlignment = .center
         
-        // Tiempo transcurrido
         timeLabel.font = UIFont.systemFont(ofSize: 16)
         timeLabel.textColor = UIColor.systemGray
         timeLabel.textAlignment = .center
         
-        // Estado (Aprobado/Reprobado)
         statusLabel.font = UIFont.boldSystemFont(ofSize: 20)
         statusLabel.textAlignment = .center
         
-        // NUEVO: Achievements obtenidos
-        achievementsLabel.text = "🏆 ¡Nuevos logros obtenidos!"
+        achievementsLabel.text = "new_achievements".localized
         achievementsLabel.font = UIFont.boldSystemFont(ofSize: 18)
         achievementsLabel.textColor = UIColor.systemOrange
         achievementsLabel.textAlignment = .center
-        achievementsLabel.isHidden = true // Solo mostrar si hay achievements
+        achievementsLabel.isHidden = true
         
         achievementsStackView.axis = .vertical
         achievementsStackView.spacing = 8
         achievementsStackView.alignment = .center
         achievementsStackView.isHidden = true
         
-        // Botón continuar (como tu reiniciar btn)
-        continueButton.setTitle("Continuar", for: .normal)
+        continueButton.setTitle("continue_button".localized, for: .normal)
         continueButton.backgroundColor = UIColor.systemBlue
         continueButton.setTitleColor(.white, for: .normal)
         continueButton.layer.cornerRadius = 10
@@ -165,7 +152,6 @@ class QuizResultsViewController: UIViewController {
             statusLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             statusLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            // NUEVO: Constraints para achievements
             achievementsLabel.topAnchor.constraint(equalTo: statusLabel.bottomAnchor, constant: 20),
             achievementsLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             achievementsLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
@@ -181,71 +167,57 @@ class QuizResultsViewController: UIViewController {
         ])
     }
     
-    // MOSTRAR RESULTADOS (como tu JS completion screen)
     private func displayResults() {
         scoreLabel.text = quizResult.scoreDisplay
         percentageLabel.text = "\(Int(quizResult.scorePercentage))%"
         
-        detailsLabel.text = "Respondiste correctamente \(quizResult.score) de \(quizResult.totalQuestions) preguntas"
+        detailsLabel.text = "answered_correctly".localized(with: quizResult.score, quizResult.totalQuestions)
         
-        penaltyLabel.text = "Errores cometidos: \(quizResult.penaltyCount)"
+        penaltyLabel.text = "errors_made".localized(with: quizResult.penaltyCount)
         
         let minutes = Int(quizResult.completionTime) / 60
         let seconds = Int(quizResult.completionTime) % 60
-        timeLabel.text = "Tiempo: \(minutes):\(String(format: "%02d", seconds))"
+        let timeString = "\(minutes):\(String(format: "%02d", seconds))"
+        timeLabel.text = "time_taken".localized(with: timeString)
         
-        // Estado y color del círculo
         if quizResult.passed {
-            statusLabel.text = "¡Aprobado! ✓"
+            statusLabel.text = "passed".localized
             statusLabel.textColor = UIColor.systemGreen
             scoreCircleView.backgroundColor = UIColor.systemGreen
         } else {
-            statusLabel.text = "No aprobado"
+            statusLabel.text = "failed".localized
             statusLabel.textColor = UIColor.systemRed
             scoreCircleView.backgroundColor = UIColor.systemRed
         }
     }
     
-    // NUEVO: GUARDAR PROGRESO CON SISTEMA DE ACHIEVEMENTS
-    /// Procesa el resultado del quiz usando el nuevo sistema gamificado
-    /// ORIGEN: Quiz completado con QuizResult
-    /// PROCESO: Usar UserProgressManager.processQuizCompletion() para evaluar achievements
-    /// DESTINO: Student actualizado con nuevos puntos, achievements y estadísticas
     private func saveProgress() {
-        // Procesar resultado con el nuevo sistema de achievements
         let obtainedAchievements = UserProgressManager.shared.processQuizCompletion(quizResult)
         
-        // Guardar achievements obtenidos para mostrar en UI
         self.newAchievements = obtainedAchievements
         
-        // Mostrar achievements si se obtuvieron algunos
         if !obtainedAchievements.isEmpty {
             displayNewAchievements(obtainedAchievements)
         }
         
-        // Log para debugging
         if let user = UserProgressManager.shared.getCurrentUser() {
-            print("✅ Quiz procesado - Usuario: \(user.name)")
-            print("📊 Total puntos: \(user.totalPoints), Nivel: \(user.level)")
-            print("🏆 Achievements obtenidos: \(obtainedAchievements.count)")
+            print("Quiz procesado - Usuario: \(user.name)")
+            print("Total puntos: \(user.totalPoints), Nivel: \(user.level)")
+            print("Achievements obtenidos: \(obtainedAchievements.count)")
         }
     }
     
-    // NUEVO: Mostrar achievements obtenidos en la UI
     private func displayNewAchievements(_ achievements: [Achievement]) {
         achievementsLabel.isHidden = false
         achievementsStackView.isHidden = false
         
-        // Limpiar achievements anteriores
         achievementsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
-        // Agregar cada achievement obtenido
         for achievement in achievements {
             let achievementView = createAchievementRow(for: achievement)
             achievementsStackView.addArrangedSubview(achievementView)
         }
         
-        // Animar aparición
         achievementsLabel.alpha = 0.0
         achievementsStackView.alpha = 0.0
         
@@ -281,7 +253,6 @@ class QuizResultsViewController: UIViewController {
         containerView.addSubview(titleLabel)
         containerView.addSubview(pointsLabel)
         
-        // Constraints
         iconImageView.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         pointsLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -307,10 +278,8 @@ class QuizResultsViewController: UIViewController {
     }
     
     @objc private func continueButtonTapped() {
-        // NUEVO: Actualizar Dashboard antes de navegar
         updateDashboardIfNeeded()
         
-        // Buscar el QuizListViewController en la pila de navegación
         if let viewControllers = navigationController?.viewControllers {
             for viewController in viewControllers.reversed() {
                 if viewController is QuizListViewController {
@@ -320,21 +289,16 @@ class QuizResultsViewController: UIViewController {
             }
         }
         
-        // Si no encuentra QuizListViewController, ir al root
         navigationController?.popToRootViewController(animated: true)
     }
     
-    // NUEVO: Actualizar Dashboard si está en la pila de navegación
     private func updateDashboardIfNeeded() {
         guard let navigationController = navigationController else { return }
         
-        // Buscar DashboardViewController en la pila de navegación
         for viewController in navigationController.viewControllers {
             if let dashboardVC = viewController as? DashboardViewController {
-                // Actualizar Dashboard con nuevos datos
                 dashboardVC.refreshAfterQuizCompletion()
                 
-                // Animar nuevos achievements si los hay
                 for achievement in newAchievements {
                     dashboardVC.animateNewAchievement(achievementId: achievement.id)
                 }
@@ -343,7 +307,6 @@ class QuizResultsViewController: UIViewController {
             }
         }
         
-        // También buscar en TabBarController si existe
         if let tabBarController = navigationController.tabBarController as? MainTabBarController {
             if let dashboardVC = tabBarController.viewControllers?.first as? UINavigationController {
                 if let dashboard = dashboardVC.viewControllers.first as? DashboardViewController {

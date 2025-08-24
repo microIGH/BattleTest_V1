@@ -117,7 +117,6 @@ class QuizListViewController: UIViewController {
     }
 }
 
-// MARK: - TableView DataSource & Delegate
 extension QuizListViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -145,7 +144,6 @@ extension QuizListViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-// MARK: - QuizTableViewCell
 class QuizTableViewCell: UITableViewCell {
     
     private let titleLabel = UILabel()

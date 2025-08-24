@@ -3,11 +3,10 @@
 //  BattleTest_V1
 //
 //  Created by ISRAEL GARCIA on 21/08/25.
-//
+//.
 
 import Foundation
 
-// MARK: - Achievement Types
 enum AchievementType: String, CaseIterable, Codable {
     case velocity = "velocity"
     case precision = "precision"
@@ -26,18 +25,16 @@ enum AchievementType: String, CaseIterable, Codable {
     }
 }
 
-// MARK: - Achievement Status
 enum AchievementStatus: String, Codable {
     case locked = "locked"       // No disponible aún
     case unlocked = "unlocked"   // Disponible para obtener
     case earned = "earned"       // Ya conseguido
 }
 
-// MARK: - Achievement Difficulty
 enum AchievementDifficulty: String, Codable {
-    case bronze = "bronze"   // 5-10 puntos
-    case silver = "silver"   // 15-20 puntos
-    case gold = "gold"       // 25-40 puntos
+    case bronze = "bronze"
+    case silver = "silver"
+    case gold = "gold"
     
     var pointsRange: String {
         switch self {
@@ -48,7 +45,7 @@ enum AchievementDifficulty: String, Codable {
     }
 }
 
-// MARK: - Achievement Model
+
 struct Achievement: Codable, Identifiable, Equatable {
     let id: String
     let type: AchievementType
@@ -61,7 +58,7 @@ struct Achievement: Codable, Identifiable, Equatable {
     var status: AchievementStatus
     var earnedDate: Date?
     
-    // MARK: - Computed Properties for UI
+
     var displayTitle: String {
         return title
     }
@@ -82,7 +79,6 @@ struct Achievement: Codable, Identifiable, Equatable {
         return status == .unlocked || status == .earned
     }
     
-    // Color basado en dificultad y estado
     var badgeColor: String {
         if status == .locked {
             return "systemGray3"
@@ -95,9 +91,8 @@ struct Achievement: Codable, Identifiable, Equatable {
         }
     }
     
-    // MARK: - Static Achievement Definitions
+
     static let allAchievements: [Achievement] = [
-        // VELOCITY ACHIEVEMENTS
         Achievement(
             id: "velocity_relampago",
             type: .velocity,
@@ -132,7 +127,6 @@ struct Achievement: Codable, Identifiable, Equatable {
             status: .unlocked
         ),
         
-        // PRECISION ACHIEVEMENTS
         Achievement(
             id: "precision_punteria",
             type: .precision,
@@ -167,7 +161,6 @@ struct Achievement: Codable, Identifiable, Equatable {
             status: .unlocked
         ),
         
-        // CONSISTENCY ACHIEVEMENTS
         Achievement(
             id: "consistency_dedicado",
             type: .consistency,
@@ -202,7 +195,6 @@ struct Achievement: Codable, Identifiable, Equatable {
             status: .unlocked
         ),
         
-        // EXPLORER ACHIEVEMENTS
         Achievement(
             id: "explorer_curioso",
             type: .explorer,
@@ -237,7 +229,6 @@ struct Achievement: Codable, Identifiable, Equatable {
             status: .unlocked
         ),
         
-        // PERFECTIONIST ACHIEVEMENTS
         Achievement(
             id: "perfectionist_persistente",
             type: .perfectionist,
@@ -274,7 +265,6 @@ struct Achievement: Codable, Identifiable, Equatable {
     ]
 }
 
-// MARK: - Achievement Criteria
 enum AchievementCriteria: Codable, Equatable {
     case velocity(maxSecondsPerQuestion: Double, minAccuracy: Double)
     case precision(requiredAccuracy: Double, minQuestions: Int)

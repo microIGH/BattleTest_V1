@@ -9,18 +9,15 @@ import UIKit
 
 class DashboardViewController: UIViewController {
     
-    // MARK: - UI Components
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     private let welcomeLabel = UILabel()
-    private let totalPointsLabel = UILabel() // NUEVO: Puntuación total grande
+    private let totalPointsLabel = UILabel()
     
-    // Componentes gamificados
     private let levelProgressView = CircularProgressView()
     private let achievementGridView = AchievementGridView()
     private let weeklyChartView = WeeklyProgressChart()
     
-    // Tarjetas de estadísticas rápidas (3 tarjetas)
     private let quickStatsStackView = UIStackView()
     private let totalQuizzesCard = StatsCardView()
     private let averageScoreCard = StatsCardView()
@@ -40,32 +37,25 @@ class DashboardViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        // DEBUGGING: Verificar estado del usuario
         if let user = UserProgressManager.shared.getCurrentUser() {
-            print("✅ Usuario encontrado: \(user.name)")
-            print("🔍 Usuario actual: '\(user.name)' - Email: '\(user.email)'")
-            print("📊 Puntos: \(user.totalPoints), Nivel: \(user.level)")
-            print("🏆 Achievements: \(user.achievements.count)")
+            print("Usuario encontrado: \(user.name)")
+            print("Usuario actual: '\(user.name)' - Email: '\(user.email)'")
+            print("Puntos: \(user.totalPoints), Nivel: \(user.level)")
+            print("Achievements: \(user.achievements.count)")
         } else {
-            print("❌ No hay usuario registrado - Crear usuario desde Registration")
+            print("No hay usuario registrado - Crear usuario desde Registration")
         }
         
         loadDashboardData()
     }
     
-    // MARK: - Setup Methods
-    
-    /// Configura la interfaz inicial del dashboard
-    /// ORIGEN: viewDidLoad necesita configurar UI
-    /// PROCESO: Configurar scroll view, labels y componentes gamificados
-    /// DESTINO: Dashboard listo para mostrar datos
     private func setupUI() {
         view.backgroundColor = UIColor(named: "PrimaryBackground") ?? UIColor.systemBackground
         title = "Dashboard"
         
         setupScrollView()
         setupWelcomeLabel()
-        setupTotalPointsLabel() // NUEVO
+        setupTotalPointsLabel()
         setupGameComponents()
         setupQuickStats()
     }
@@ -82,23 +72,21 @@ class DashboardViewController: UIViewController {
         welcomeLabel.font = UIFont.boldSystemFont(ofSize: 28)
         welcomeLabel.textColor = UIColor.label
         welcomeLabel.textAlignment = .left
-        welcomeLabel.text = "¡Hola, Estudiante!"
+        welcomeLabel.text = "hello_user".localized(with: "Estudiante")
         
         contentView.addSubview(welcomeLabel)
     }
     
-    // NUEVO: Setup del label de puntuación total
     private func setupTotalPointsLabel() {
         totalPointsLabel.font = UIFont.boldSystemFont(ofSize: 36)
         totalPointsLabel.textColor = UIColor.systemBlue
         totalPointsLabel.textAlignment = .center
-        totalPointsLabel.text = "0 PUNTOS"
+        totalPointsLabel.text = "0 " + "points".localized
         
         contentView.addSubview(totalPointsLabel)
     }
     
     private func setupGameComponents() {
-        // Level Progress View
         levelProgressView.backgroundColor = UIColor.systemBackground
         levelProgressView.layer.cornerRadius = 12
         levelProgressView.layer.shadowColor = UIColor.black.cgColor
@@ -157,12 +145,12 @@ class DashboardViewController: UIViewController {
             welcomeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             welcomeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             
-            // NUEVO: Total Points Label (entre welcome y level progress)
+            // Total Points Label (entre welcome y level progress)
             totalPointsLabel.topAnchor.constraint(equalTo: welcomeLabel.bottomAnchor, constant: 16),
             totalPointsLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             totalPointsLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             
-            // Level Progress View (centrado, ahora debajo del total points)
+            // Level Progress View (centrado, debajo del total points)
             levelProgressView.topAnchor.constraint(equalTo: totalPointsLabel.bottomAnchor, constant: 20),
             levelProgressView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             levelProgressView.widthAnchor.constraint(equalToConstant: 160),
@@ -174,7 +162,7 @@ class DashboardViewController: UIViewController {
             quickStatsStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
             quickStatsStackView.heightAnchor.constraint(equalToConstant: 80),
             
-            // Achievement Grid View - Altura reducida y scroll interno
+            // Achievement Grid View - scroll interno
             achievementGridView.topAnchor.constraint(equalTo: quickStatsStackView.bottomAnchor, constant: 24),
             achievementGridView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             achievementGridView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
@@ -191,12 +179,6 @@ class DashboardViewController: UIViewController {
         ])
     }
     
-    // MARK: - Data Loading
-    
-    /// Carga y actualiza todos los datos del dashboard
-    /// ORIGEN: viewWillAppear o después de completar quiz
-    /// PROCESO: Obtener stats de UserProgressManager y actualizar todos los componentes
-    /// DESTINO: Dashboard actualizado con datos del estudiante actual
     private func loadDashboardData() {
         guard let stats = UserProgressManager.shared.getDashboardStats() else {
             showEmptyState()
@@ -208,15 +190,12 @@ class DashboardViewController: UIViewController {
     }
     
     private func updateUI(with stats: DashboardStats) {
-        // Actualizar welcome label con nombre real del usuario
         if let user = UserProgressManager.shared.getCurrentUser() {
-            welcomeLabel.text = "¡Hola, \(user.name)!"
+            welcomeLabel.text = "hello_user".localized(with: user.name)
         }
         
-        // NUEVO: Actualizar puntuación total grande
-        totalPointsLabel.text = "\(stats.totalPoints) PUNTOS"
+        totalPointsLabel.text = "\(stats.totalPoints) " + "points".localized
         
-        // Actualizar progreso de nivel
         levelProgressView.configure(
             level: stats.level,
             progress: stats.progressToNextLevel,
@@ -224,43 +203,37 @@ class DashboardViewController: UIViewController {
             animated: true
         )
         
-        // CORREGIDO: Mostrar solo achievements obtenidos en el grid
         if let user = UserProgressManager.shared.getCurrentUser() {
             let earnedAchievements = user.achievements.filter { $0.status == .earned }
             achievementGridView.configure(with: earnedAchievements)
         }
         
-        // Actualizar gráfica semanal
         weeklyChartView.configure(
             weeklyData: stats.weeklyActivity,
             currentStreak: stats.currentStreak,
             animated: true
         )
         
-        // Actualizar tarjetas de estadísticas rápidas
         updateQuickStats(with: stats)
     }
     
     private func updateQuickStats(with stats: DashboardStats) {
-        // Total de quizzes
         totalQuizzesCard.configure(
-            title: "Quizzes",
+            title: "quizzes".localized,
             value: "\(stats.totalQuizzes)",
             backgroundColor: UIColor.systemBlue
         )
         
-        // Promedio general
         let averageText = stats.averageScore > 0 ? String(format: "%.0f%%", stats.averageScore) : "0%"
         averageScoreCard.configure(
-            title: "Promedio",
+            title: "average".localized,
             value: averageText,
             backgroundColor: UIColor.systemGreen
         )
         
-        // Tiempo de estudio (restaurado)
         let studyTimeText = formatStudyTime(stats.totalStudyTime)
         studyTimeCard.configure(
-            title: "Tiempo",
+            title: "time".localized,
             value: studyTimeText,
             backgroundColor: UIColor.systemPurple
         )
@@ -278,56 +251,38 @@ class DashboardViewController: UIViewController {
     }
     
     private func showEmptyState() {
-        welcomeLabel.text = "¡Bienvenido!"
-        totalPointsLabel.text = "0 PUNTOS" // NUEVO
+        welcomeLabel.text = "welcome".localized
+        totalPointsLabel.text = "0 " + "points".localized
         levelProgressView.configure(level: 1, progress: 0.0, experienceNeeded: 100, animated: false)
-        achievementGridView.configure(with: []) // Lista vacía para mostrar solo obtenidos
+        achievementGridView.configure(with: [])
         weeklyChartView.configure(weeklyData: Array(repeating: 0, count: 7), currentStreak: 0, animated: false)
         
-        totalQuizzesCard.configure(title: "Quizzes", value: "0", backgroundColor: UIColor.systemBlue)
-        averageScoreCard.configure(title: "Promedio", value: "0%", backgroundColor: UIColor.systemGreen)
-        studyTimeCard.configure(title: "Tiempo", value: "0m", backgroundColor: UIColor.systemPurple)
+        totalQuizzesCard.configure(title: "quizzes".localized, value: "0", backgroundColor: UIColor.systemBlue)
+        averageScoreCard.configure(title: "average".localized, value: "0%", backgroundColor: UIColor.systemGreen)
+        studyTimeCard.configure(title: "time".localized, value: "0m", backgroundColor: UIColor.systemPurple)
     }
     
-    // MARK: - Public Methods for External Updates
-    
-    /// Método público para actualizar el dashboard cuando se completa un quiz
-    /// ORIGEN: Llamado desde QuizResultsViewController o similar
-    /// PROCESO: Recargar datos y animar cambios relevantes
-    /// DESTINO: Dashboard actualizado con nuevos datos
     func refreshAfterQuizCompletion() {
         loadDashboardData()
         
-        // Animar actividad de hoy en la gráfica
         weeklyChartView.animateTodayActivity()
         
-        // Verificar si hay nuevos achievements para mostrar notificación
         if UserProgressManager.shared.hasNewAchievements() {
             showNewAchievementsBadge()
         }
     }
     
-    /// Anima un nuevo achievement obtenido
-    /// ORIGEN: Cuando se detecta un nuevo achievement
-    /// PROCESO: Animar el badge correspondiente en el grid
-    /// DESTINO: Feedback visual de nuevo logro
     func animateNewAchievement(achievementId: String) {
         achievementGridView.animateNewAchievement(achievementId: achievementId)
     }
     
-    /// Anima subida de nivel
-    /// ORIGEN: Cuando el estudiante sube de nivel
-    /// PROCESO: Animación especial en el círculo de progreso
-    /// DESTINO: Feedback visual satisfactorio
     func animateLevelUp(from oldLevel: Int, to newLevel: Int) {
         levelProgressView.animateLevelUp(from: oldLevel, to: newLevel) {
-            // Reload data después de la animación
             self.loadDashboardData()
         }
     }
     
     private func showNewAchievementsBadge() {
-        // Mostrar badge temporal de nuevos achievements
         let badgeView = UIView()
         badgeView.backgroundColor = UIColor.systemOrange
         badgeView.layer.cornerRadius = 8
@@ -343,13 +298,12 @@ class DashboardViewController: UIViewController {
         badgeView.addSubview(badgeLabel)
         achievementGridView.addSubview(badgeView)
         
-        // Posicionar en la esquina superior derecha
+        //esquina superior derecha
         badgeView.frame.origin = CGPoint(
             x: achievementGridView.bounds.width - 24,
             y: 8
         )
         
-        // Animar aparición
         badgeView.alpha = 0.0
         badgeView.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         
@@ -358,7 +312,6 @@ class DashboardViewController: UIViewController {
             badgeView.transform = .identity
         })
         
-        // Remover después de 3 segundos
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
             UIView.animate(withDuration: 0.3, animations: {
                 badgeView.alpha = 0.0
@@ -369,14 +322,8 @@ class DashboardViewController: UIViewController {
     }
 }
 
-// MARK: - AchievementGridViewDelegate
-
 extension DashboardViewController: AchievementGridViewDelegate {
     
-    /// Maneja tap en achievement para mostrar detalles
-    /// ORIGEN: Usuario toca un achievement en el grid
-    /// PROCESO: Mostrar alert con detalles del achievement
-    /// DESTINO: Información detallada del logro
     func achievementGridView(_ gridView: AchievementGridView, didTapAchievement achievement: Achievement) {
         showAchievementDetails(achievement)
     }
@@ -385,7 +332,6 @@ extension DashboardViewController: AchievementGridViewDelegate {
         let title = achievement.displayTitle
         var message = achievement.displayDescription
         
-        // Agregar información adicional según el estado
         switch achievement.status {
         case .locked:
             message += "\n\n🔒 Este logro aún no está disponible."

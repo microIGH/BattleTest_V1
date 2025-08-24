@@ -39,7 +39,6 @@ class QuizSession: ObservableObject {
     }
     
     private func setupQuiz() {
-        // Obtener preguntas aleatorias (como getRandomQuestions de tu JS)
         selectedQuestions = getRandomQuestions(from: quiz.questions, count: minQuestionsNumber)
         
         // Inicializar arrays

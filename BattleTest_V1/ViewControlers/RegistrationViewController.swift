@@ -23,25 +23,25 @@ class RegistrationViewController: UIViewController {
         view.backgroundColor = UIColor(named: "PrimaryBackground") ?? UIColor.systemBackground
         
         // Título
-        titleLabel.text = "¡Bienvenido a Battle Test!"
+        titleLabel.text = "welcome_title".localized
         titleLabel.font = UIFont.boldSystemFont(ofSize: 24)
         titleLabel.textColor = UIColor.label
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
         
         // Campo nombre
-        nameTextField.placeholder = "Tu nombre"
+        nameTextField.placeholder = "name_placeholder".localized
         nameTextField.borderStyle = .roundedRect
         nameTextField.backgroundColor = UIColor.systemGray6
         
         // Campo email
-        emailTextField.placeholder = "Tu email"
+        emailTextField.placeholder = "email_placeholder".localized
         emailTextField.borderStyle = .roundedRect
         emailTextField.backgroundColor = UIColor.systemGray6
         emailTextField.keyboardType = .emailAddress
         
         // Botón registro
-        registerButton.setTitle("Comenzar Aventura", for: .normal)
+        registerButton.setTitle("start_adventure".localized, for: .normal)
         registerButton.backgroundColor = UIColor.systemBlue
         registerButton.setTitleColor(.white, for: .normal)
         registerButton.layer.cornerRadius = 10
@@ -95,19 +95,17 @@ class RegistrationViewController: UIViewController {
             return
         }
         
-        // Crear y guardar estudiante
         let student = Student(name: name, email: email)
         UserProgressManager.shared.saveUser(student)
         
-        // Navegar a TabBar
         let tabBarVC = MainTabBarController()
         tabBarVC.modalPresentationStyle = .fullScreen
         present(tabBarVC, animated: true)
     }
 
     private func showAlert(message: String) {
-        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        let alert = UIAlertController(title: "error_title".localized, message: "complete_fields".localized, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "ok_button".localized, style: .default))
         present(alert, animated: true)
     }
 }

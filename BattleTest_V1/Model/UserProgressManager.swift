@@ -12,8 +12,6 @@ class UserProgressManager {
     
     private init() {}
     
-    // MARK: - Original Methods (Mantener compatibilidad)
-    
     func getCurrentUser() -> Student? {
         guard let userData = UserDefaults.standard.data(forKey: "currentUser"),
               let student = try? JSONDecoder().decode(Student.self, from: userData) else {
@@ -36,43 +34,25 @@ class UserProgressManager {
         return AppSettings.shared.isFirstTime
     }
     
-    // MARK: - New Achievement Integration Methods
-    
-    /// Procesa un resultado de quiz completo con achievements automáticos
-    /// ORIGEN: QuizResult recién completado desde QuizResultsViewController
-    /// PROCESO: Agregar resultado al Student + evaluar achievements + persistir
-    /// DESTINO: Student actualizado con nuevos puntos, achievements y estadísticas
     func processQuizCompletion(_ result: QuizResult) -> [Achievement] {
         guard var student = getCurrentUser() else {
             print("❌ Error: No se pudo obtener el usuario actual")
             return []
         }
         
-        // Agregar resultado al historial del student (esto calcula puntos base automáticamente)
         student.addQuizResult(result)
         
-        // Evaluar y otorgar achievements correspondientes
         let newAchievements = AchievementManager.shared.evaluateAchievements(for: result, student: &student)
         
         // Persistir cambios
         saveUser(student)
         
-        // Log para debugging
-        if !newAchievements.isEmpty {
-            print("🏆 Quiz completado: +\(result.score * 2) puntos base")
-            print("🏆 Achievements obtenidos: \(newAchievements.map { "\($0.title) (+\($0.points)pts)" }.joined(separator: ", "))")
-            print("🏆 Total puntos: \(student.totalPoints), Nivel: \(student.level)")
-        }
-        
         return newAchievements
     }
     
-    /// Actualiza solo los achievements sin agregar un nuevo resultado de quiz
-    /// Útil para recalcular achievements después de cambios en criterios
     func recalculateAchievements() {
         guard var student = getCurrentUser() else { return }
         
-        // Reset achievements to unlocked state
         for i in 0..<student.achievements.count {
             if student.achievements[i].status == .earned {
                 student.achievements[i].status = .unlocked
@@ -80,26 +60,23 @@ class UserProgressManager {
             }
         }
         
-        // Reset achievement points
         let originalPoints = student.totalPoints
         student.totalPoints = 0
         student.achievementPointsToday = 0
         
-        // Recalculate base points from quiz results
         for result in student.quizResults {
-            student.totalPoints += result.score * 2  // 2 puntos por respuesta correcta
+            student.totalPoints += result.score * 2
             if result.passed {
-                student.totalPoints += 10  // Bonus por aprobar
+                student.totalPoints += 10
                 if result.scorePercentage >= 90 {
-                    student.totalPoints += 5  // Bonus por excelencia
+                    student.totalPoints += 5
                 }
                 if result.scorePercentage == 100 {
-                    student.totalPoints += 5  // Bonus adicional por perfección
+                    student.totalPoints += 5
                 }
             }
         }
         
-        // Re-evaluate all achievements
         for result in student.quizResults {
             let _ = AchievementManager.shared.evaluateAchievements(for: result, student: &student)
         }
@@ -108,12 +85,6 @@ class UserProgressManager {
         print("🔄 Achievements recalculados. Puntos: \(originalPoints) → \(student.totalPoints)")
     }
     
-    // MARK: - Dashboard Statistics Methods
-    
-    /// Obtiene estadísticas para el Dashboard gamificado
-    /// ORIGEN: Dashboard necesita datos actualizados para mostrar
-    /// PROCESO: Calcular estadísticas en tiempo real del Student actual
-    /// DESTINO: Estructura de datos lista para mostrar en UI
     func getDashboardStats() -> DashboardStats? {
         guard let student = getCurrentUser() else { return nil }
         
@@ -139,10 +110,6 @@ class UserProgressManager {
         )
     }
     
-    /// Obtiene estadísticas para el ProfileViewController
-    /// ORIGEN: Profile necesita datos detallados del estudiante
-    /// PROCESO: Calcular progreso por asignatura y estadísticas detalladas
-    /// DESTINO: Estructura de datos para ProfileViewController
     func getProfileStats() -> ProfileStats? {
         guard let student = getCurrentUser() else { return nil }
         
@@ -167,20 +134,15 @@ class UserProgressManager {
         )
     }
     
-    // MARK: - Achievement Management
-    
-    /// Obtiene achievements por categoría para mostrar en UI
     func getAchievementsByCategory() -> [AchievementType: [Achievement]] {
         guard let student = getCurrentUser() else { return [:] }
         
         return Dictionary(grouping: student.achievements) { $0.type }
     }
     
-    /// Verifica si hay nuevos achievements disponibles para mostrar notificación
     func hasNewAchievements() -> Bool {
         guard let student = getCurrentUser() else { return false }
         
-        // Verificar si hay achievements obtenidos en las últimas 24 horas
         let yesterday = Date().addingTimeInterval(-86400)
         return student.achievements.contains { achievement in
             if let earnedDate = achievement.earnedDate {
@@ -190,18 +152,13 @@ class UserProgressManager {
         }
     }
     
-    // MARK: - Utility Methods
-    
-    /// Reinicia el progreso del usuario (útil para testing)
     func resetUserProgress() {
         guard var student = getCurrentUser() else { return }
         
-        // Reset core progress
         student.totalPoints = 0
         student.level = 1
         student.experiencePoints = 0
         
-        // Reset achievements
         for i in 0..<student.achievements.count {
             student.achievements[i].status = .unlocked
             student.achievements[i].earnedDate = nil
@@ -209,13 +166,11 @@ class UserProgressManager {
         student.achievementPointsToday = 0
         student.lastAchievementDate = nil
         
-        // Reset streak
         student.currentStreak = 0
         student.bestStreak = 0
         student.lastActivityDate = nil
         student.lastStreakRewardDate = nil
         
-        // Reset statistics
         student.totalStudyTime = 0
         student.completedQuizzes.removeAll()
         student.quizResults.removeAll()
@@ -226,10 +181,8 @@ class UserProgressManager {
         student.lastQuizDate = nil
         
         saveUser(student)
-        print("🔄 Progreso del usuario reiniciado completamente")
     }
     
-    /// Actualiza streak manualmente (útil para testing o correcciones)
     func updateStreak(to newStreak: Int) {
         guard var student = getCurrentUser() else { return }
         
@@ -240,11 +193,9 @@ class UserProgressManager {
         student.lastActivityDate = Date()
         
         saveUser(student)
-        print("🔥 Streak actualizado a \(newStreak) días")
     }
 }
 
-// MARK: - Data Structures for UI
 
 struct DashboardStats {
     let totalPoints: Int

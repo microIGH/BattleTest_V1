@@ -29,3 +29,44 @@
 "achievement_earned" = "🏆 Obtenido el %@";
 "achievement_reward" = "💰 Recompensa: %@";
 "close" = "Cerrar";
+
+//
+"level_progress" = "%d pts para\nsiguiente nivel";
+"level_max" = "¡Nivel máximo!";
+"achievements_title" = "🏆 Logros Obtenidos (%d)";
+"no_achievements_yet" = "🏆 Aún no tienes logros";
+"activity_streak" = "Racha: %d día";
+"activity_days" = "días";
+"quizzes_completed" = "%d/%d quizzes";
+
+"level" = "Nivel %d";
+"streak_day" = "Racha: %d día";
+"welcome" = "¡Bienvenido!";
+
+"weekly_activity" = "📊 Actividad Semanal";
+"streak_text" = "🔥 Racha: %d día";
+"streak_days" = "🔥 Racha: %d días";
+
+"biology" = "Biología";
+"physics" = "Física";
+"chemistry" = "Química";
+"mathematics" = "Matemáticas";
+"questions" = "%d preguntas";
+
+"welcome_title" = "¡Bienvenido a Battle Test!";
+"name_placeholder" = "Tu nombre";
+"email_placeholder" = "Tu email";
+"start_adventure" = "Comenzar Aventura";
+"error_title" = "Error";
+"complete_fields" = "Por favor completa todos los campos";
+"ok_button" = "OK";
+
+"results_title" = "Resultados";
+"quiz_completed" = "Cuestionario completado";
+"answered_correctly" = "Respondiste correctamente %d de\n%d preguntas";
+"errors_made" = "Errores cometidos: %d";
+"time_taken" = "Tiempo: %@";
+"passed" = "¡Aprobado! ✓";
+"failed" = "No aprobado ✗";
+"new_achievements" = "🏆 ¡Nuevos logros obtenidos!";
+"continue_button" = "Continuar";

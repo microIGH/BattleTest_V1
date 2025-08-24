@@ -9,7 +9,6 @@ import UIKit
 
 class QuizViewController: UIViewController {
     
-    // UI Elements (como tu HTML structure)
     private let penaltyDotsView = PenaltyDotsView()
     private let titleLabel = UILabel()
     private let progressView = UIProgressView()
@@ -19,11 +18,9 @@ class QuizViewController: UIViewController {
     private let nextButton = UIButton(type: .system)
     private let buttonsStackView = UIStackView()
     
-    // Data (como tu JS variables)
     private var quizSession: QuizSession!
     private var quizEngine: QuizEngine!
     
-    // CONFIGURACIÓN INICIAL
     func configure(with quiz: Quiz, subject: Subject) {
         quizSession = QuizSession(quiz: quiz, subject: subject)
         quizEngine = QuizEngine(session: quizSession)
@@ -41,42 +38,36 @@ class QuizViewController: UIViewController {
         view.backgroundColor = UIColor(named: "PrimaryBackground") ?? UIColor.systemBackground
         title = quizSession.subject.name
         
-        // Title label (como tu #quiz-title)
         titleLabel.font = UIFont.boldSystemFont(ofSize: 18)
         titleLabel.textColor = UIColor.systemGray
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
         titleLabel.text = quizSession.quiz.title
         
-        // Progress view (como tu .progress-bar)
         progressView.progressTintColor = UIColor.systemGreen
         progressView.trackTintColor = UIColor.systemGray5
         progressView.layer.cornerRadius = 4
         progressView.clipsToBounds = true
         
-        // Progress label
         progressLabel.font = UIFont.boldSystemFont(ofSize: 14)
         progressLabel.textColor = UIColor.white
         progressLabel.textAlignment = .center
         progressLabel.backgroundColor = UIColor.systemGreen
         
-        // Back button (como tu #back-btn)
-        backButton.setTitle("Regresar", for: .normal)
+        backButton.setTitle("back".localized, for: .normal)
         backButton.backgroundColor = UIColor.systemGray3
         backButton.setTitleColor(.white, for: .normal)
         backButton.layer.cornerRadius = 8
         backButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         
-        // Next button (como tu #next-btn)
-        nextButton.setTitle("Siguiente", for: .normal)
+        nextButton.setTitle("next".localized, for: .normal)
         nextButton.backgroundColor = UIColor.systemGreen
         nextButton.setTitleColor(.white, for: .normal)
         nextButton.layer.cornerRadius = 8
         nextButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         
-        // Buttons stack view (como tu .survey-controller)
         buttonsStackView.axis = .horizontal
         buttonsStackView.distribution = .fillEqually
         buttonsStackView.spacing = 20
@@ -135,7 +126,6 @@ class QuizViewController: UIViewController {
         questionView.delegate = self
     }
     
-    // FUNCIÓN startQuiz (como tu JS startQuiz)
     private func startQuiz() {
         updatePenaltyDots()
         showCurrentQuestion()
@@ -143,15 +133,12 @@ class QuizViewController: UIViewController {
         updateButtonStates()
     }
     
-    // FUNCIÓN showQuestion (EXACTA DE TU JS)
     private func showCurrentQuestion() {
         let questionIndex = quizSession.currentQuestionIndex
         let questionData = quizSession.selectedQuestions[questionIndex]
         
-        // Obtener opciones mezcladas (como tu JS shuffledOptions)
         let shuffledOptions = quizEngine.getShuffledOptions(for: questionIndex)
         
-        // Obtener respuesta previa si existe (como tu JS previouslySelectedOption)
         let previousAnswer = quizEngine.getPreviousAnswer(for: questionIndex)
         
         questionView.configure(
@@ -163,7 +150,6 @@ class QuizViewController: UIViewController {
         updateButtonStates()
     }
     
-    // FUNCIÓN updateProgressBar (EXACTA DE TU JS)
     private func updateProgressBar() {
         let progress = quizSession.progressPercentage
         let progressPercent = Int(progress * 100)
@@ -177,7 +163,6 @@ class QuizViewController: UIViewController {
     }
     
     private func updateButtonStates() {
-        // Back button disabled if first question (como tu JS)
         backButton.isEnabled = quizSession.currentQuestionIndex > 0
         backButton.backgroundColor = backButton.isEnabled ? UIColor.systemGray3 : UIColor.systemGray5
         
@@ -186,36 +171,28 @@ class QuizViewController: UIViewController {
         nextButton.backgroundColor = nextButton.isEnabled ? UIColor.systemGreen : UIColor.systemGray5
     }
     
-    // ACTION: Next button (LÓGICA EXACTA DE TU JS next-btn)
     @objc private func nextButtonTapped() {
         guard let selectedOption = questionView.getSelectedAnswer() else { return }
         
-        // Procesar respuesta con QuizEngine (tu lógica JS)
         let result = quizEngine.processAnswer(selectedOption)
         
-        // Actualizar penalty dots (como tu updatePenaltyDots JS)
         updatePenaltyDots()
         
-        // Verificar si se alcanzó el límite de errores (como tu JS)
         if result == .restartRequired {
             showRestartAlert()
             return
         }
         
-        // Avanzar a siguiente pregunta
         let nextResult = quizEngine.moveToNextQuestion()
         
         if nextResult == .quizCompleted {
-            // Quiz completado, ir a resultados
             showResults()
         } else {
-            // Continuar con siguiente pregunta (como tu JS)
             showCurrentQuestion()
             updateProgressBar()
         }
     }
     
-    // ACTION: Back button (LÓGICA EXACTA DE TU JS back-btn)
     @objc private func backButtonTapped() {
         if quizSession.currentQuestionIndex > 0 {
             quizEngine.processBackNavigation()
@@ -252,7 +229,6 @@ class QuizViewController: UIViewController {
     }
 }
 
-// MARK: - QuestionViewDelegate
 extension QuizViewController: QuestionViewDelegate {
     func questionView(_ questionView: QuestionView, didSelectAnswer answer: String) {
         // Habilitar botón siguiente cuando se seleccione una respuesta (como tu JS event listener)

@@ -31,10 +31,9 @@ class PenaltyDotsView: UIView {
         stackView.distribution = .fillEqually
         stackView.alignment = .center
         
-        // Configurar cada punto (como tu CSS .dot)
         [dot1, dot2, dot3].forEach { dot in
-            dot.backgroundColor = UIColor.systemGray4 // Color inicial gris
-            dot.layer.cornerRadius = 7.5 // Radio para hacer círculo (15px/2)
+            dot.backgroundColor = UIColor.systemGray4
+            dot.layer.cornerRadius = 7.5
             dot.clipsToBounds = true
             
             stackView.addArrangedSubview(dot)
@@ -53,7 +52,6 @@ class PenaltyDotsView: UIView {
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            // Cada punto 15x15 (como tu CSS)
             dot1.widthAnchor.constraint(equalToConstant: 15),
             dot1.heightAnchor.constraint(equalToConstant: 15),
             dot2.widthAnchor.constraint(equalToConstant: 15),
@@ -63,16 +61,13 @@ class PenaltyDotsView: UIView {
         ])
     }
     
-    // FUNCIÓN EXACTA DE TU JS updatePenaltyDots()
     func updatePenaltyCount(_ count: Int) {
         let dots = [dot1, dot2, dot3]
         
         for (index, dot) in dots.enumerated() {
             if index < count {
-                // Rojo cuando hay error (como tu CSS .dot.red)
                 dot.backgroundColor = UIColor.systemRed
             } else {
-                // Gris cuando no hay error
                 dot.backgroundColor = UIColor.systemGray4
             }
         }

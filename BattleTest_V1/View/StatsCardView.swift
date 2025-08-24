@@ -64,11 +64,9 @@ class StatsCardView: UIView {
         valueLabel.text = value
         self.backgroundColor = backgroundColor
         
-        // ARREGLAR: Colores de texto que se vean en ambos modos
         titleLabel.textColor = UIColor.white
         valueLabel.textColor = UIColor.white
         
-        // Agregar sombra para mejor legibilidad
         titleLabel.layer.shadowColor = UIColor.black.cgColor
         titleLabel.layer.shadowOffset = CGSize(width: 0, height: 1)
         titleLabel.layer.shadowRadius = 1

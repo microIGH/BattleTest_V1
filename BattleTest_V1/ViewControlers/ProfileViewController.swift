@@ -9,23 +9,20 @@ import UIKit
 
 class ProfileViewController: UIViewController {
     
-    // MARK: - UI Components
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
-    // Header con avatar
+    //avatar
     private let headerView = UIView()
     private let avatarView = UIView()
     private let avatarLabel = UILabel()
     private let nameLabel = UILabel()
     private let levelLabel = UILabel()
     
-    // Progreso por asignatura
     private let subjectsProgressView = UIView()
     private let subjectsLabel = UILabel()
     private let progressStackView = UIStackView()
     
-    // Grid de achievements
     private let achievementsView = UIView()
     private let achievementsLabel = UILabel()
     private let achievementGridView = AchievementGridView()
@@ -43,7 +40,7 @@ class ProfileViewController: UIViewController {
     
     private func setupUI() {
         view.backgroundColor = UIColor(named: "PrimaryBackground") ?? UIColor.systemBackground
-        title = "Perfil"
+        title = "profile_title".localized
         
         setupScrollView()
         setupHeader()
@@ -58,35 +55,30 @@ class ProfileViewController: UIViewController {
     }
     
     private func setupHeader() {
-        // Header container
         headerView.backgroundColor = UIColor(named: "AccentBlue") ?? UIColor.systemBlue
         headerView.layer.cornerRadius = 16
         contentView.addSubview(headerView)
         
-        // Avatar circular
         avatarView.backgroundColor = UIColor.white
         avatarView.layer.cornerRadius = 40
         headerView.addSubview(avatarView)
         
-        // Inicial del nombre
         avatarLabel.font = UIFont.boldSystemFont(ofSize: 32)
         avatarLabel.textColor = UIColor.systemBlue
         avatarLabel.textAlignment = .center
         avatarView.addSubview(avatarLabel)
         
-        // Nombre
         nameLabel.font = UIFont.boldSystemFont(ofSize: 24)
         nameLabel.textColor = UIColor.white
         headerView.addSubview(nameLabel)
         
-        // Nivel
         levelLabel.font = UIFont.systemFont(ofSize: 16)
         levelLabel.textColor = UIColor.white.withAlphaComponent(0.9)
         headerView.addSubview(levelLabel)
     }
     
     private func setupSubjectsProgress() {
-        subjectsLabel.text = "Progreso por Asignatura"
+        subjectsLabel.text = "progress_by_subject".localized
         subjectsLabel.font = UIFont.boldSystemFont(ofSize: 20)
         subjectsLabel.textColor = UIColor.label
         
@@ -98,11 +90,10 @@ class ProfileViewController: UIViewController {
     }
     
     private func setupAchievements() {
-        achievementsLabel.text = "Logros"
+        achievementsLabel.text = "achievements".localized
         achievementsLabel.font = UIFont.boldSystemFont(ofSize: 20)
         achievementsLabel.textColor = UIColor.label
         
-        // AGREGAR DELEGATE
         achievementGridView.delegate = self
         
         contentView.addSubview(achievementsLabel)
@@ -189,20 +180,16 @@ class ProfileViewController: UIViewController {
     private func loadUserData() {
         guard let user = UserProgressManager.shared.getCurrentUser() else { return }
         
-        // Actualizar header
         avatarLabel.text = String(user.name.prefix(1)).uppercased()
         nameLabel.text = user.name
-        levelLabel.text = "Nivel \(user.level) • \(user.totalPoints) puntos"
+        levelLabel.text = "level_points".localized(with: user.level, user.totalPoints)
         
-        // Actualizar progreso por asignaturas
         updateSubjectsProgress(user: user)
         
-        // Actualizar achievements - mostrar todos los obtenidos
         achievementGridView.configure(with: user.achievements)
     }
     
     private func updateSubjectsProgress(user: Student) {
-        // Limpiar stack view
         progressStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         let progress = user.getProgressBySubject()
@@ -224,11 +211,12 @@ class ProfileViewController: UIViewController {
         container.layer.cornerRadius = 12
         
         let titleLabel = UILabel()
-        titleLabel.text = title
+        let localizedTitle = getLocalizedSubjectName(title.lowercased())
+        titleLabel.text = localizedTitle
         titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
         
         let statsLabel = UILabel()
-        statsLabel.text = "\(completed)/\(total) quizzes"
+        statsLabel.text = "quizzes_completed".localized(with: completed, total)
         statsLabel.font = UIFont.systemFont(ofSize: 14)
         statsLabel.textColor = UIColor.secondaryLabel
         
@@ -246,7 +234,6 @@ class ProfileViewController: UIViewController {
         container.addSubview(progressBar)
         container.addSubview(percentageLabel)
         
-        // Constraints básicos
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         statsLabel.translatesAutoresizingMaskIntoConstraints = false
         progressBar.translatesAutoresizingMaskIntoConstraints = false
@@ -273,7 +260,16 @@ class ProfileViewController: UIViewController {
     }
 }
 
-// MARK: - AchievementGridViewDelegate
+private func getLocalizedSubjectName(_ subjectId: String) -> String {
+    switch subjectId {
+    case "fisica": return "physics".localized
+    case "biologia": return "biology".localized
+    case "matematicas": return "mathematics".localized
+    case "quimica": return "chemistry".localized
+    default: return subjectId.capitalized
+    }
+}
+
 extension ProfileViewController: AchievementGridViewDelegate {
     
     func achievementGridView(_ gridView: AchievementGridView, didTapAchievement achievement: Achievement) {
@@ -287,23 +283,23 @@ extension ProfileViewController: AchievementGridViewDelegate {
         // Agregar información adicional según el estado
         switch achievement.status {
         case .locked:
-            message += "\n\n🔒 Este logro aún no está disponible."
+            message += "\n\n" + "achievement_locked".localized
             
         case .unlocked:
-            message += "\n\n⭐ ¡Completa los requisitos para obtener \(achievement.displayPoints)!"
+            message += "\n\n" + "achievement_unlocked".localized(with: achievement.displayPoints)
             
         case .earned:
             if let earnedDate = achievement.earnedDate {
                 let formatter = DateFormatter()
                 formatter.dateStyle = .medium
                 formatter.timeStyle = .short
-                message += "\n\n🏆 Obtenido el \(formatter.string(from: earnedDate))"
-                message += "\n💰 Recompensa: \(achievement.displayPoints)"
+                message += "\n\n" + "achievement_earned".localized(with: formatter.string(from: earnedDate))
+                message += "\n" + "achievement_reward".localized(with: achievement.displayPoints)
             }
         }
         
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cerrar", style: .default))
+        alert.addAction(UIAlertAction(title: "close".localized, style: .default))
         
         present(alert, animated: true)
     }

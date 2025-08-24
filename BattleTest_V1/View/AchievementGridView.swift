@@ -13,23 +13,19 @@ protocol AchievementGridViewDelegate: AnyObject {
 
 class AchievementGridView: UIView {
     
-    // MARK: - Properties
     weak var delegate: AchievementGridViewDelegate?
     private var achievements: [Achievement] = []
     private var achievementViews: [AchievementBadgeView] = []
     
-    // MARK: - UI Components
     private let titleLabel = UILabel()
     private let gridStackView = UIStackView()
     private let scrollView = UIScrollView()
     private let contentView = UIView()
     
-    // MARK: - Configuration
     private let gridColumns = 3
     private let badgeSize: CGFloat = 60.0
     private let spacing: CGFloat = 16.0
     
-    // MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -40,12 +36,6 @@ class AchievementGridView: UIView {
         setupView()
     }
     
-    // MARK: - Setup Methods
-    
-    /// Configura la vista inicial del grid
-    /// ORIGEN: Inicialización del componente
-    /// PROCESO: Configurar título, scroll view y stack view para grid
-    /// DESTINO: Vista lista para mostrar achievements en grid
     private func setupView() {
         backgroundColor = UIColor.systemBackground
         layer.cornerRadius = 12
@@ -61,7 +51,7 @@ class AchievementGridView: UIView {
     }
     
     private func setupTitleLabel() {
-        titleLabel.text = "🏆 Logros Obtenidos"
+        titleLabel.text = "achievements_title".localized(with: 0)
         titleLabel.font = UIFont.boldSystemFont(ofSize: 18)
         titleLabel.textColor = UIColor.label
         titleLabel.textAlignment = .center
@@ -120,12 +110,6 @@ class AchievementGridView: UIView {
         ])
     }
     
-    // MARK: - Public Configuration Methods
-    
-    /// Configura el grid con una lista de achievements
-    /// ORIGEN: DashboardViewController con achievements del Student
-    /// PROCESO: Crear badges para cada achievement y organizarlos en grid
-    /// DESTINO: Grid visual actualizado con estados correctos
     func configure(with achievements: [Achievement]) {
         self.achievements = achievements
         updateGrid()
@@ -133,18 +117,14 @@ class AchievementGridView: UIView {
     }
     
     private func updateGrid() {
-        // Limpiar grid existente
         clearGrid()
         
-        // Crear filas del grid
         let rows = createRows(from: achievements)
         
-        // Agregar filas al stack view
         for row in rows {
             gridStackView.addArrangedSubview(row)
         }
         
-        // Animar la aparición de nuevos badges
         animateGridAppearance()
     }
     
@@ -158,7 +138,6 @@ class AchievementGridView: UIView {
     private func createRows(from achievements: [Achievement]) -> [UIStackView] {
         var rows: [UIStackView] = []
         
-        // Mostrar solo los primeros 12 achievements (4 filas x 3 columnas)
         let displayAchievements = Array(achievements.prefix(12))
         
         for i in stride(from: 0, to: displayAchievements.count, by: gridColumns) {
@@ -195,7 +174,6 @@ class AchievementGridView: UIView {
         let badgeView = AchievementBadgeView()
         badgeView.configure(with: achievement, size: badgeSize)
         
-        // Agregar tap gesture
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(badgeTapped(_:)))
         badgeView.addGestureRecognizer(tapGesture)
         badgeView.isUserInteractionEnabled = true
@@ -210,7 +188,6 @@ class AchievementGridView: UIView {
         
         let achievement = achievements[badgeView.tag]
         
-        // Animación de tap
         badgeView.animateTap {
             self.delegate?.achievementGridView(self, didTapAchievement: achievement)
         }
@@ -220,13 +197,11 @@ class AchievementGridView: UIView {
         let totalCount = achievements.count
         
         if totalCount == 0 {
-            titleLabel.text = "🏆 Aún no tienes logros"
+            titleLabel.text = "no_achievements_yet".localized
         } else {
-            titleLabel.text = "🏆 Logros Obtenidos (\(totalCount))"
+            titleLabel.text = "achievements_title".localized(with: totalCount)
         }
     }
-    
-    // MARK: - Animation Methods
     
     private func animateGridAppearance() {
         for (index, badgeView) in achievementViews.enumerated() {
@@ -245,27 +220,19 @@ class AchievementGridView: UIView {
         }
     }
     
-    /// Anima un nuevo achievement obtenido
-    /// ORIGEN: Cuando el estudiante obtiene un nuevo logro
-    /// PROCESO: Buscar el badge correspondiente y animarlo
-    /// DESTINO: Feedback visual de nuevo achievement obtenido
     func animateNewAchievement(achievementId: String) {
         guard let achievement = achievements.first(where: { $0.id == achievementId }),
               let badgeView = achievementViews.first(where: { $0.tag == achievements.firstIndex(where: { $0.id == achievementId }) }) else {
             return
         }
         
-        // Actualizar el badge con el nuevo estado
         badgeView.configure(with: achievement, size: badgeSize)
         
-        // Animación de "brillo" para nuevo achievement
         badgeView.animateShine()
         
         // Actualizar título
         updateTitle()
     }
-    
-    // MARK: - Utility Methods
     
     override var intrinsicContentSize: CGSize {
         let rows = ceil(Double(min(achievements.count, 12)) / Double(gridColumns))
@@ -273,8 +240,6 @@ class AchievementGridView: UIView {
         return CGSize(width: UIView.noIntrinsicMetric, height: height)
     }
 }
-
-// MARK: - AchievementBadgeView (CORREGIDO: Puntuaciones visibles)
 
 class AchievementBadgeView: UIView {
     
@@ -293,16 +258,13 @@ class AchievementBadgeView: UIView {
     }
     
     private func setupView() {
-        // Badge background (círculo)
         badgeBackgroundView.layer.cornerRadius = 30 // Se ajustará con el tamaño
         badgeBackgroundView.layer.borderWidth = 2
         badgeBackgroundView.layer.borderColor = UIColor.systemGray4.cgColor
         
-        // Icon
         iconImageView.contentMode = .scaleAspectFit
         iconImageView.tintColor = UIColor.systemGray3
         
-        // Points label - CORREGIDO: Más visible
         pointsLabel.font = UIFont.boldSystemFont(ofSize: 10)
         pointsLabel.textColor = UIColor.white
         pointsLabel.textAlignment = .center
@@ -311,7 +273,6 @@ class AchievementBadgeView: UIView {
         pointsLabel.layer.masksToBounds = true
         pointsLabel.isHidden = true
         
-        // NUEVO: Sombra para que se vea mejor
         pointsLabel.layer.shadowColor = UIColor.black.cgColor
         pointsLabel.layer.shadowOffset = CGSize(width: 0, height: 1)
         pointsLabel.layer.shadowRadius = 2
@@ -343,7 +304,6 @@ class AchievementBadgeView: UIView {
             iconImageView.widthAnchor.constraint(equalTo: badgeBackgroundView.widthAnchor, multiplier: 0.6),
             iconImageView.heightAnchor.constraint(equalTo: badgeBackgroundView.heightAnchor, multiplier: 0.6),
             
-            // Points label - CORREGIDO: Más grande y más arriba
             pointsLabel.topAnchor.constraint(equalTo: badgeBackgroundView.topAnchor, constant: 0),
             pointsLabel.trailingAnchor.constraint(equalTo: badgeBackgroundView.trailingAnchor, constant: 15),
             pointsLabel.widthAnchor.constraint(equalToConstant: 40),
@@ -351,20 +311,13 @@ class AchievementBadgeView: UIView {
         ])
     }
     
-    /// Configura el badge con un achievement específico
-    /// ORIGEN: AchievementGridView con achievement y tamaño
-    /// PROCESO: Configurar ícono, colores y estado según achievement
-    /// DESTINO: Badge visual configurado correctamente
     func configure(with achievement: Achievement, size: CGFloat) {
-        // Actualizar tamaño
         widthAnchor.constraint(equalToConstant: size).isActive = true
         heightAnchor.constraint(equalToConstant: size).isActive = true
         badgeBackgroundView.layer.cornerRadius = size / 2
         
-        // Configurar ícono
         iconImageView.image = UIImage(systemName: achievement.iconName)
         
-        // Configurar colores y estado
         switch achievement.status {
         case .locked:
             badgeBackgroundView.backgroundColor = UIColor.systemGray6
@@ -398,8 +351,6 @@ class AchievementBadgeView: UIView {
         case .gold: return UIColor(red: 1.0, green: 0.8, blue: 0.0, alpha: 1.0)   // Oro más brillante
         }
     }
-    
-    // MARK: - Animation Methods
     
     func animateTap(completion: @escaping () -> Void) {
         UIView.animate(withDuration: 0.1, animations: {

@@ -12,18 +12,12 @@ class AchievementManager {
     
     private init() {}
     
-    // MARK: - Main Achievement Evaluation IGH
-    
-    /// Evalúa un resultado de quiz y otorga achievements correspondientes
-    /// ORIGEN: QuizResult recién completado + Student actual
-    /// PROCESO: Evaluar cada tipo de achievement con validaciones anti-exploit
-    /// DESTINO: Student actualizado con nuevos achievements otorgados
+
     func evaluateAchievements(for result: QuizResult, student: inout Student) -> [Achievement] {
         var newAchievements: [Achievement] = []
         
-        // Verificar límites anti-exploit
+        
         guard canEarnMoreAchievements(student: student) else {
-            print("⚠️ Límite diario de achievements alcanzado")
             return newAchievements
         }
         
@@ -53,15 +47,10 @@ class AchievementManager {
             newAchievements.append(perfectionistAchievement)
         }
         
-        // Log para debugging
-        if !newAchievements.isEmpty {
-            print("🏆 Nuevos achievements otorgados: \(newAchievements.map { $0.title })")
-        }
-        
         return newAchievements
     }
     
-    // MARK: - Anti-Exploit Validations
+    
     
     private func canEarnMoreAchievements(student: Student) -> Bool {
         // Verificar límite diario de achievement points (máximo 50 por día)
@@ -72,7 +61,6 @@ class AchievementManager {
             return false
         }
         
-        // Verificar que no ha hecho demasiados quizzes hoy (anti-farming)
         if student.dailyQuizCount > 20 {
             return false
         }
@@ -85,7 +73,7 @@ class AchievementManager {
     }
     
     private func canEarnVelocityAchievement(for quizId: String, student: Student) -> Bool {
-        // Solo puede ganar un achievement de velocidad por quiz específico
+        
         let velocityAchievementsForQuiz = student.quizResults.filter { result in
             result.quizId == quizId &&
             hasVelocityAchievementForResult(result, in: student.getEarnedAchievements())
@@ -108,10 +96,9 @@ class AchievementManager {
         return false
     }
     
-    // MARK: - Velocity Achievement Evaluation
     
     private func evaluateVelocityAchievements(result: QuizResult, student: Student) -> Achievement? {
-        // Validaciones básicas anti-exploit
+        
         guard result.scorePercentage >= 70.0 else { return nil }  // Mínimo 70% aciertos
         guard result.totalQuestions >= 5 else { return nil }      // Mínimo 5 preguntas
         guard canEarnVelocityAchievement(for: result.quizId, student: student) else { return nil }
@@ -119,7 +106,7 @@ class AchievementManager {
         let avgTimePerQuestion = result.completionTime / Double(result.totalQuestions)
         guard avgTimePerQuestion >= 5.0 else { return nil }       // Anti-bot: mínimo 5s por pregunta
         
-        // Buscar el mejor achievement de velocidad que califique
+        //mejor achievement de velocidad que califique
         let velocityAchievements = Achievement.allAchievements.filter { $0.type == .velocity }
             .sorted { $0.points > $1.points }  // Ordenar por puntos (mayor a menor)
         
@@ -129,7 +116,7 @@ class AchievementManager {
             
             if case .velocity(let maxSeconds, let minAccuracy) = achievement.criteria {
                 if avgTimePerQuestion <= maxSeconds && Double(result.scorePercentage) >= minAccuracy {
-                    print("✅ Velocity Achievement: \(achievement.title) - \(avgTimePerQuestion)s avg")
+                    
                     return achievement
                 }
             }
@@ -138,7 +125,6 @@ class AchievementManager {
         return nil
     }
     
-    // MARK: - Precision Achievement Evaluation
     
     private func evaluatePrecisionAchievements(result: QuizResult, student: Student) -> Achievement? {
         guard result.scorePercentage == 100.0 else { return nil }
@@ -153,7 +139,6 @@ class AchievementManager {
                 if Double(result.scorePercentage) >= requiredAccuracy && result.totalQuestions >= minQuestions {
                     // Verificar cooldown de 1 hora para mismo quiz
                     if canEarnPrecisionAchievement(for: result.quizId, student: student) {
-                        print("✅ Precision Achievement: \(achievement.title)")
                         return achievement
                     }
                 }
@@ -162,13 +147,11 @@ class AchievementManager {
                 if checkPrecisionStreak(requiredStreak: requiredStreak,
                                        requiredAccuracy: requiredAccuracy,
                                        student: student) {
-                    print("✅ Precision Streak Achievement: \(achievement.title)")
                     return achievement
                 }
                 
             case .precisionAllSubjects(let requiredAccuracy):
                 if checkPrecisionAllSubjects(requiredAccuracy: requiredAccuracy, student: student) {
-                    print("✅ Precision All Subjects Achievement: \(achievement.title)")
                     return achievement
                 }
                 
@@ -205,7 +188,6 @@ class AchievementManager {
         }
     }
     
-    // MARK: - Consistency Achievement Evaluation
     
     private func evaluateConsistencyAchievements(student: Student) -> Achievement? {
         let consistencyAchievements = Achievement.allAchievements.filter { $0.type == .consistency }
@@ -215,9 +197,7 @@ class AchievementManager {
             
             if case .consistency(let requiredDays) = achievement.criteria {
                 if student.currentStreak >= requiredDays {
-                    // Verificar que no haya recibido reward de streak hoy
                     if canEarnStreakReward(student: student) {
-                        print("✅ Consistency Achievement: \(achievement.title) - \(student.currentStreak) días")
                         return achievement
                     }
                 }
@@ -236,7 +216,6 @@ class AchievementManager {
         return today > lastRewardDay
     }
     
-    // MARK: - Explorer Achievement Evaluation
     
     private func evaluateExplorerAchievements(result: QuizResult, student: Student) -> Achievement? {
         let explorerAchievements = Achievement.allAchievements.filter { $0.type == .explorer }
@@ -246,7 +225,6 @@ class AchievementManager {
             
             if case .explorer(let requiredSubjects) = achievement.criteria {
                 if student.subjectsExploredCount >= requiredSubjects {
-                    print("✅ Explorer Achievement: \(achievement.title) - \(student.subjectsExploredCount) asignaturas")
                     return achievement
                 }
             }
@@ -254,8 +232,6 @@ class AchievementManager {
         
         return nil
     }
-    
-    // MARK: - Perfectionist Achievement Evaluation
     
     private func evaluatePerfectionistAchievements(result: QuizResult, student: Student) -> Achievement? {
         guard result.scorePercentage == 100.0 else { return nil }
@@ -270,7 +246,6 @@ class AchievementManager {
                 if checkPerfectionistCriteria(requiredPerfectQuizzes: requiredPerfectQuizzes,
                                             allowRetries: allowRetries,
                                             student: student) {
-                    print("✅ Perfectionist Achievement: \(achievement.title)")
                     return achievement
                 }
                 
@@ -278,7 +253,6 @@ class AchievementManager {
                 if Double(result.scorePercentage) >= requiredAccuracy {
                     let avgTime = result.completionTime / Double(result.totalQuestions)
                     if avgTime <= maxSecondsPerQuestion {
-                        print("✅ Perfect Absolute Achievement: \(achievement.title)")
                         return achievement
                     }
                 }
@@ -293,17 +267,13 @@ class AchievementManager {
     
     private func checkPerfectionistCriteria(requiredPerfectQuizzes: Int, allowRetries: Bool, student: Student) -> Bool {
         if allowRetries {
-            // Contar cualquier quiz donde haya logrado 100%
             let perfectResults = student.quizResults.filter { $0.scorePercentage == 100.0 }
             return perfectResults.count >= requiredPerfectQuizzes
         } else {
-            // Contar solo quizzes únicos donde logró 100% en el primer intento
             let perfectQuizIds = Set(student.quizResults.filter { $0.scorePercentage == 100.0 }.map { $0.quizId })
             return perfectQuizIds.count >= requiredPerfectQuizzes
         }
     }
-    
-    // MARK: - Achievement Statistics
     
     func getAchievementProgress(for student: Student) -> (earned: Int, total: Int, percentage: Float) {
         let earned = student.getEarnedAchievements().count
