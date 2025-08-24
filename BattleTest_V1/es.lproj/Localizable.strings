@@ -1,0 +1,31 @@
+// Dashboard
+"dashboard_title" = "Dashboard";
+"hello_user" = "¡Hola, %@!";
+"points" = "PUNTOS";
+"quizzes" = "Quizzes";
+"average" = "Promedio";
+"time" = "Tiempo";
+"achievements_obtained" = "🏆 Logros Obtenidos (%d)";
+"no_achievements" = "🏆 Aún no tienes logros";
+
+// Profile
+"profile_title" = "Perfil";
+"progress_by_subject" = "Progreso por Asignatura";
+"achievements" = "Logros";
+"level_points" = "Nivel %d • %d puntos";
+
+// Subjects
+"subjects_title" = "Asignaturas";
+"search_subject" = "Buscar asignatura...";
+
+// Quiz
+"back" = "Regresar";
+"next" = "Siguiente";
+"completed" = "completados";
+
+// Achievements
+"achievement_locked" = "🔒 Este logro aún no está disponible.";
+"achievement_unlocked" = "⭐ ¡Completa los requisitos para obtener %@!";
+"achievement_earned" = "🏆 Obtenido el %@";
+"achievement_reward" = "💰 Recompensa: %@";
+"close" = "Cerrar";
